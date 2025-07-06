@@ -15,11 +15,9 @@ import {
   PieChart,
   X
 } from 'lucide-react';
-import { PageType } from '../../App';
+import { NavLink } from 'react-router-dom';
 
 interface SidebarProps {
-  currentPage: PageType;
-  onPageChange: (page: PageType) => void;
   isOpen: boolean;
   onClose: () => void;
 }
@@ -40,11 +38,9 @@ const navigation = [
   { name: 'Paramètres', href: 'settings', icon: SettingsIcon },
 ];
 
-export const Sidebar: React.FC<SidebarProps> = ({ 
-  currentPage, 
-  onPageChange, 
-  isOpen, 
-  onClose 
+export const Sidebar: React.FC<SidebarProps> = ({
+  isOpen,
+  onClose
 }) => {
   return (
     <>
@@ -81,26 +77,27 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <ul className="space-y-1">
             {navigation.map((item) => {
               const Icon = item.icon;
-              const isActive = currentPage === item.href;
               
               return (
                 <li key={item.name}>
-                  <button
-                    onClick={() => {
-                      onPageChange(item.href as PageType);
-                      onClose();
-                    }}
-                    className={`
-                      w-full flex items-center space-x-3 px-3 py-3 rounded-lg text-sm font-medium transition-colors
-                      ${isActive 
-                        ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-600' 
-                        : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
-                      }
-                    `}
+                  <NavLink
+                    to={`/${item.href}`}
+                    onClick={onClose}
+                    className={({ isActive: active }) =>
+                      `w-full flex items-center space-x-3 px-3 py-3 rounded-lg text-sm font-medium transition-colors ${
+                        active
+                          ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-600'
+                          : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                      }`
+                    }
                   >
-                    <Icon className={`w-5 h-5 ${isActive ? 'text-blue-600' : 'text-gray-400'}`} />
-                    <span>{item.name}</span>
-                  </button>
+                    {({ isActive: active }) => (
+                      <>
+                        <Icon className={`w-5 h-5 ${active ? 'text-blue-600' : 'text-gray-400'}`} />
+                        <span>{item.name}</span>
+                      </>
+                    )}
+                  </NavLink>
                 </li>
               );
             })}
