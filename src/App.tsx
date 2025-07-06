@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { Dashboard } from './components/Dashboard/Dashboard';
 import { InvoiceManager } from './components/Invoices/InvoiceManager';
 import { ExpenseManager } from './components/Expenses/ExpenseManager';
@@ -15,63 +16,59 @@ import { AnalyticalAccounting } from './components/Accounting/AnalyticalAccounti
 import { Sidebar } from './components/Layout/Sidebar';
 import { Header } from './components/Layout/Header';
 
-export type PageType = 'dashboard' | 'invoices' | 'expenses' | 'treasury' | 'assets' | 'customers' | 'reports' | 'settings' | 'accounting' | 'ledger' | 'reconciliation' | 'taxes' | 'analytical';
+export type PageType =
+  | 'dashboard'
+  | 'invoices'
+  | 'expenses'
+  | 'treasury'
+  | 'assets'
+  | 'customers'
+  | 'reports'
+  | 'settings'
+  | 'accounting'
+  | 'ledger'
+  | 'reconciliation'
+  | 'taxes'
+  | 'analytical';
 
 function App() {
-  const [currentPage, setCurrentPage] = useState<PageType>('dashboard');
   const [sidebarOpen, setSidebarOpen] = useState(false);
-
-  const renderPage = () => {
-    switch (currentPage) {
-      case 'dashboard':
-        return <Dashboard />;
-      case 'invoices':
-        return <InvoiceManager />;
-      case 'expenses':
-        return <ExpenseManager />;
-      case 'treasury':
-        return <TreasuryDashboard />;
-      case 'assets':
-        return <AssetManager />;
-      case 'customers':
-        return <CustomerManager />;
-      case 'reports':
-        return <ReportsCenter />;
-      case 'settings':
-        return <Settings />;
-      case 'accounting':
-        return <AccountingDashboard />;
-      case 'ledger':
-        return <GeneralLedger />;
-      case 'reconciliation':
-        return <BankReconciliation />;
-      case 'taxes':
-        return <TaxDeclarations />;
-      case 'analytical':
-        return <AnalyticalAccounting />;
-      default:
-        return <Dashboard />;
-    }
-  };
+  const [darkMode, setDarkMode] = useState(false);
+  const location = useLocation();
+  const currentPage = location.pathname.replace('/', '') || 'dashboard';
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Sidebar 
-        currentPage={currentPage} 
-        onPageChange={setCurrentPage}
+    <div className={`min-h-screen bg-gray-50 dark:bg-gray-900 ${darkMode ? 'dark' : ''}`}>
+      <Sidebar
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
       />
-      
+
       <div className="lg:ml-64">
-        <Header 
+        <Header
           onMenuClick={() => setSidebarOpen(!sidebarOpen)}
-          currentPage={currentPage}
+          currentPage={currentPage as PageType}
+          darkMode={darkMode}
+          onToggleDark={() => setDarkMode(!darkMode)}
         />
-        
+
         <main className="py-6">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            {renderPage()}
+            <Routes>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/invoices" element={<InvoiceManager />} />
+              <Route path="/expenses" element={<ExpenseManager />} />
+              <Route path="/treasury" element={<TreasuryDashboard />} />
+              <Route path="/assets" element={<AssetManager />} />
+              <Route path="/customers" element={<CustomerManager />} />
+              <Route path="/reports" element={<ReportsCenter />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route path="/accounting" element={<AccountingDashboard />} />
+              <Route path="/ledger" element={<GeneralLedger />} />
+              <Route path="/reconciliation" element={<BankReconciliation />} />
+              <Route path="/taxes" element={<TaxDeclarations />} />
+              <Route path="/analytical" element={<AnalyticalAccounting />} />
+            </Routes>
           </div>
         </main>
       </div>
